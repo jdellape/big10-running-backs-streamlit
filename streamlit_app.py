@@ -96,12 +96,20 @@ c = alt.Chart(data).mark_bar(opacity=0.7).encode(
 )
 st.altair_chart(c, use_container_width=True)
 
+#Show a cumulative line chart comparison
+c_two = alt.Chart(data).mark_line().encode(
+    x=x,
+    y='cum_sum_as_window_percentage',
+    color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
+)
+st.altair_chart(c_two, use_container_width=True)
+
 #Show the top bin differences between the teams
 st.subheader('Top Differences by Yardage Bin')
 
 top_difference_df = comparison_data.iloc[:5,:]
 #Graph it in a meaningful way
-c_two = alt.Chart(top_difference_df).mark_bar().encode(
+c_three = alt.Chart(top_difference_df).mark_bar().encode(
     x=x,
     y=alt.Y('difference', stack=None, axis=alt.Axis(title="Difference in Proportion of Team Carries")),
     color=alt.condition(
@@ -110,13 +118,5 @@ c_two = alt.Chart(top_difference_df).mark_bar().encode(
         alt.value("orange")  # The negative color
 ))
 
-st.altair_chart(c_two, use_container_width=True)
-
-#Show a cumulative line chart comparison using the data
-c_three = alt.Chart(data).mark_line().encode(
-    x=x,
-    y='cum_sum_as_window_percentage',
-    color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
-)
 st.altair_chart(c_three, use_container_width=True)
 
