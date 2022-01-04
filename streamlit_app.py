@@ -4,7 +4,7 @@ import pandas as pd
 import altair as alt
 
 #Describe the data app
-st.image('https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Big_Ten_Conference_logo.svg/320px-Big_Ten_Conference_logo.svg.png')
+st.image('https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Big_Ten_Conference_logo.svg/220px-Big_Ten_Conference_logo.svg.png')
 st.title('Running Back Carries by Yards Gained')
 
 st.markdown("I'm a data analyst and also a big Penn State football fan. Our fanbase griped a lot this season about our running game. My Question: How frustrating is our running game relative to other teams? So I grabbed a handful of Big Ten teams and looked at the distribution of yards gained across running back carries. Select a season and a couple teams below to see how they compared!")
