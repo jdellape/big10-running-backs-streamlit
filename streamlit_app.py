@@ -93,6 +93,8 @@ c = alt.Chart(data).mark_bar(opacity=0.7).encode(
     y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="Percentage of Team RB Carries")),
     color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=alt.Legend(orient="top-right"))
 )
+#Make background of chart white
+c.configure(background = '#FDFEFF')
 st.altair_chart(c, use_container_width=True)
 
 #Show the top bin differences between the teams
