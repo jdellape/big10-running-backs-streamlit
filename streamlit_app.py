@@ -30,6 +30,7 @@ data_load_state.text('Loading data...done!')
 team_list = list(data.team.unique())
 
 season_list = list(data.season.unique())
+season_list.sort(reverse=True) 
 
 #Enable user selection
 selected_season = st.selectbox(
