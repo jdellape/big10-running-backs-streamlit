@@ -3,6 +3,8 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+st.set_page_config(layout="wide")
+
 #Describe the data app
 st.image('https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Big_Ten_Conference_logo.svg/220px-Big_Ten_Conference_logo.svg.png')
 st.title('Running Back Carries by Yards Gained')
@@ -89,51 +91,76 @@ x = {"field": "statBin", "type": "ordinal", "sort": bins_to_keep, "axis":alt.Axi
 domain = ['Iowa', 'Michigan', 'Michigan State', 'Ohio State', 'Penn State', 'Wisconsin']
 range_ = ['#000000', 'yellow', '#18453B', '#DE3121', '#00265D', '#A00001']
 
-c = alt.Chart(data).mark_bar(opacity=0.7).encode(
+
+st.write('')
+row3_space1, row3_1, row3_space2, row3_2, row3_space3 = st.columns(
+    (.1, 1, .1, 1, .1))
+
+with row3_1:
+    st.subheader('Run Count by Yardage Bin')
+    c = alt.Chart(data).mark_bar(opacity=0.7).encode(
     x=x,
     y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="Percentage of Team RB Carries")),
     color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=alt.Legend(orient="top-right"))
-)
-st.altair_chart(c, use_container_width=True)
+    )
+    st.altair_chart(c, use_container_width=True)
 
-#Show a cumulative line chart comparison
-c_two = alt.Chart(data).mark_line().encode(
-    x=x,
-    y='cum_sum_as_window_percentage',
-    color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
-)                   
-st.altair_chart(c_two, use_container_width=True)
+with row3_2:
+    #Show the top bin differences between the teams
+    st.subheader('Top Differences by Yardage Bin')
 
-#Get information regarding the cumulative perfect differences between t1 and t2
-cum_perc_diff_list = [v1 - v2 for v1, v2 in zip(list(t1_data.cum_sum_as_window_percentage), list(t2_data.cum_sum_as_window_percentage))]
+    top_difference_df = comparison_data.iloc[:5,:]
+    #Graph it in a meaningful way
+    c_three = alt.Chart(top_difference_df).mark_bar().encode(
+        x=x,
+        y=alt.Y('difference', stack=None, axis=alt.Axis(title="Difference in Proportion of Team Carries")),
+        color=alt.condition(
+            alt.datum.difference > 0,
+            alt.value("steelblue"),  # The positive color
+            alt.value("orange")  # The negative color
+    ))
 
-cum_series = pd.DataFrame({
-  'statBin': bins_to_keep,
-  'cum_diff': cum_perc_diff_list
-})
+    st.altair_chart(c_three, use_container_width=True)
 
-# Basic Altair line chart where it picks automatically the colors for the lines
-cum_diff_chart = alt.Chart(cum_series).mark_line(
-    point=alt.OverlayMarkDef(color="red")
-    ).encode(
-    x=x,
-    y='cum_diff'
-)
-st.altair_chart(cum_diff_chart)
+st.write('')
 
-#Show the top bin differences between the teams
-st.subheader('Top Differences by Yardage Bin')
 
-top_difference_df = comparison_data.iloc[:5,:]
-#Graph it in a meaningful way
-c_three = alt.Chart(top_difference_df).mark_bar().encode(
-    x=x,
-    y=alt.Y('difference', stack=None, axis=alt.Axis(title="Difference in Proportion of Team Carries")),
-    color=alt.condition(
-        alt.datum.difference > 0,
-        alt.value("steelblue"),  # The positive color
-        alt.value("orange")  # The negative color
-))
+#Begin row for cumulative % of total runs breakdown
+row4_space1, row4_1, row4_space2, row4_2, row4_space3 = st.columns(
+    (.1, 1, .1, 1, .1))
 
-st.altair_chart(c_three, use_container_width=True)
+with row4_1:
+    st.subheader("Cumulative Percentage of Total Runshes by Bin")
+    #Show a cumulative line chart plotting both teams on single chart
+    c_two = alt.Chart(data).mark_line().encode(
+        x=x,
+        y='cum_sum_as_window_percentage',
+        color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
+    )                   
+    st.altair_chart(c_two, use_container_width=True)
+
+with row4_2:
+    st.subheader("Difference by Bin")
+    #Get information regarding the cumulative perfect differences between t1 and t2
+    cum_perc_diff_list = [v1 - v2 for v1, v2 in zip(list(t1_data.cum_sum_as_window_percentage), list(t2_data.cum_sum_as_window_percentage))]
+
+    cum_series = pd.DataFrame({
+      'statBin': bins_to_keep,
+      'cum_diff': cum_perc_diff_list
+    })
+
+    # Basic Altair line chart where it picks automatically the colors for the lines
+    cum_diff_chart = alt.Chart(cum_series).mark_line(
+        point=alt.OverlayMarkDef(color="red")
+        ).encode(
+        x=x,
+        y='cum_diff'
+    )
+    st.altair_chart(cum_diff_chart)
+
+st.write('') 
+
+
+
+
 
