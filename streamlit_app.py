@@ -39,16 +39,16 @@ selected_season = st.selectbox(
      options=season_list)
 
 #Set teams that appear by default
-team_one = "Penn State"
-team_two = "Ohio State"
+#team_one = "Penn State"
+#team_two = "Ohio State"
 
 team_one = st.selectbox(
      label='Select Team 1:',
-     options=[team for team in team_list if team != team_two])
+     options=team_list)
 
 team_two = st.selectbox(
      label='Select Team 2:',
-     options=[team for team in team_list if team != team_one])
+     options=team_list)
 
 #Specify the yardage bins we want for our analysis
 bins_to_keep = ["(-10 | -8]","(-8 | -6]", "(-6 | -4]", "(-4 | -2]", "(-2 | 0]", "(0 | 2]", "(2 | 4]",
@@ -101,8 +101,25 @@ c_two = alt.Chart(data).mark_line().encode(
     x=x,
     y='cum_sum_as_window_percentage',
     color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
-)
+)                   
 st.altair_chart(c_two, use_container_width=True)
+
+#Get information regarding the cumulative perfect differences between t1 and t2
+cum_perc_diff_list = [v1 - v2 for v1, v2 in zip(list(t1_data.cum_sum_as_window_percentage), list(t2_data.cum_sum_as_window_percentage))]
+
+cum_series = pd.DataFrame({
+  'statBin': bins_to_keep,
+  'cum_diff': cum_perc_diff_list
+})
+
+# Basic Altair line chart where it picks automatically the colors for the lines
+cum_diff_chart = alt.Chart(cum_series).mark_line(
+    point=alt.OverlayMarkDef(color="red")
+    ).encode(
+    x=x,
+    y='cum_diff'
+)
+st.altair_chart(cum_diff_chart)
 
 #Show the top bin differences between the teams
 st.subheader('Top Differences by Yardage Bin')
