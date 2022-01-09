@@ -97,23 +97,23 @@ row3_space1, row3_1, row3_space2, row3_2, row3_space3 = st.columns(
     (.1, 1, .1, 1, .1))
 
 with row3_1:
-    st.subheader('Run Count by Yardage Bin')
+    st.subheader('Rushes by Yards Gained')
     c = alt.Chart(data).mark_bar(opacity=0.7).encode(
     x=x,
-    y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="Percentage of Team RB Carries")),
+    y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="% Total RB Carries")),
     color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=alt.Legend(orient="top-right"))
     )
     st.altair_chart(c, use_container_width=True)
 
 with row3_2:
     #Show the top bin differences between the teams
-    st.subheader('Top Differences by Yardage Bin')
+    st.subheader('Top Differences by Yardage Bin Between Teams')
 
     top_difference_df = comparison_data.iloc[:5,:]
     #Graph it in a meaningful way
     c_three = alt.Chart(top_difference_df).mark_bar().encode(
         x=x,
-        y=alt.Y('difference', stack=None, axis=alt.Axis(title="Difference in Proportion of Team Carries")),
+        y=alt.Y('difference', stack=None, axis=alt.Axis(title="Difference in % of Total Carries")),
         color=alt.condition(
             alt.datum.difference > 0,
             alt.value("steelblue"),  # The positive color
@@ -130,17 +130,17 @@ row4_space1, row4_1, row4_space2, row4_2, row4_space3 = st.columns(
     (.1, 1, .1, 1, .1))
 
 with row4_1:
-    st.subheader("Cumulative Percentage of Total Runshes by Bin")
+    st.subheader("Cumulative Percentage of Total Runshes by Yards Gained")
     #Show a cumulative line chart plotting both teams on single chart
     c_two = alt.Chart(data).mark_line().encode(
         x=x,
-        y='cum_sum_as_window_percentage',
+        y=alt.Y('cum_sum_as_window_percentage', stack=None, axis=alt.Axis(title=None)),
         color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
     )                   
     st.altair_chart(c_two, use_container_width=True)
 
 with row4_2:
-    st.subheader("Difference by Bin")
+    st.subheader("Difference in Cumulative Percentage Between Teams")
     #Get information regarding the cumulative perfect differences between t1 and t2
     cum_perc_diff_list = [v1 - v2 for v1, v2 in zip(list(t1_data.cum_sum_as_window_percentage), list(t2_data.cum_sum_as_window_percentage))]
 
@@ -154,7 +154,7 @@ with row4_2:
         point=alt.OverlayMarkDef(color="red")
         ).encode(
         x=x,
-        y='cum_diff'
+        y=alt.Y('cum_diff', axis=alt.Axis(title=None))
     )
     st.altair_chart(cum_diff_chart)
 
