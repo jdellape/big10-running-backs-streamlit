@@ -100,7 +100,7 @@ with row3_1:
     st.subheader('Rushes by Yards Gained')
     c = alt.Chart(data).mark_bar(opacity=0.7).encode(
     x=x,
-    y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="% Total RB Carries")),
+    y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="% Total RB Carries", format='%')),
     color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=alt.Legend(orient="top-right"))
     )
     st.altair_chart(c, use_container_width=True)
@@ -113,7 +113,7 @@ with row3_2:
     #Graph it in a meaningful way
     c_three = alt.Chart(top_difference_df).mark_bar().encode(
         x=x,
-        y=alt.Y('difference', stack=None, axis=alt.Axis(title="Difference in % of Total Carries")),
+        y=alt.Y('difference', stack=None, axis=alt.Axis(title="Difference in % of Total Carries", format='%')),
         color=alt.condition(
             alt.datum.difference > 0,
             alt.value("steelblue"),  # The positive color
@@ -134,7 +134,7 @@ with row4_1:
     #Show a cumulative line chart plotting both teams on single chart
     c_two = alt.Chart(data).mark_line().encode(
         x=x,
-        y=alt.Y('cum_sum_as_window_percentage', stack=None, axis=alt.Axis(title=None)),
+        y=alt.Y('cum_sum_as_window_percentage', stack=None, axis=alt.Axis(title=None, format='%')),
         color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
     )                   
     st.altair_chart(c_two, use_container_width=True)
@@ -154,7 +154,7 @@ with row4_2:
         point=alt.OverlayMarkDef(color="red")
         ).encode(
         x=x,
-        y=alt.Y('cum_diff', axis=alt.Axis(title=None))
+        y=alt.Y('cum_diff', axis=alt.Axis(title=None, format='%'))
     )
     st.altair_chart(cum_diff_chart)
 
