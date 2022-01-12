@@ -50,7 +50,7 @@ team_one = st.selectbox(
 
 team_two = st.selectbox(
      label='Select Team 2:',
-     options=team_list)
+     options=[team for team in team_list if team != team_one])
 
 #Specify the yardage bins we want for our analysis
 bins_to_keep = ["(-10 | -8]","(-8 | -6]", "(-6 | -4]", "(-4 | -2]", "(-2 | 0]", "(0 | 2]", "(2 | 4]",
