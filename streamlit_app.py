@@ -102,7 +102,7 @@ with row3_1:
     x=x,
     y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="% Total RB Carries", format='%')),
     color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=alt.Legend(orient="top-right"))
-    )
+    ).interactive()
     st.altair_chart(c, use_container_width=True)
 
 with row3_2:
