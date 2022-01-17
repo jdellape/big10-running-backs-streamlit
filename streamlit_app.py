@@ -139,14 +139,51 @@ with row4_1:
     #Incorporate the code at this link to make this chart interactive
     #https://altair-viz.github.io/gallery/multiline_tooltip.html
 
+    # Create a selection that chooses the nearest point & selects based on x-value
+    nearest = alt.selection(type='single', nearest=True, on='mouseover',
+                        fields=['statBin'], empty='none')
+
     #Show a cumulative line chart plotting both teams on single chart
     c_two = alt.Chart(data).mark_line().encode(
         x=x,
         y=alt.Y('cum_sum_as_window_percentage', stack=None, axis=alt.Axis(title=None, format='%')),
-        color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None),
-        tooltip='cum_sum_as_window_percentage'
+        color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
     )                   
-    st.altair_chart(c_two, use_container_width=True)
+
+    # Transparent selectors across the chart. This is what tells us
+    # the x-value of the cursor
+    selectors = alt.Chart(data).mark_point().encode(
+        x=x,
+        opacity=alt.value(0),
+    ).add_selection(
+        nearest
+    )
+
+    # Draw points on the line, and highlight based on selection
+    points = c_two.mark_point().encode(
+        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+    )
+
+    # Draw text labels near the points, and highlight based on selection
+    text = c_two.mark_text(align='left', dx=5, dy=-5).encode(
+        text=alt.condition(nearest, 'cum_sum_as_window_percentage', alt.value(' '))
+    )
+
+    # Draw a rule at the location of the selection
+    rules = alt.Chart(data).mark_rule(color='gray').encode(
+        x=x,
+    ).transform_filter(
+        nearest
+    )
+
+    # Put the five layers into a chart and bind the data
+    layered = alt.layer(
+        c_two, selectors, points, rules, text
+    ).properties(
+        width=600, height=300
+    )
+
+    st.altair_chart(layered, use_container_width=True)    
 
 with row4_2:
     st.subheader("Difference in Cumulative Percentage Between Teams")
