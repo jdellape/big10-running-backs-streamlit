@@ -5,6 +5,10 @@ import altair as alt
 
 st.set_page_config(layout="wide")
 
+#This code only for allowing tooltips to display when in full screen mode (https://discuss.streamlit.io/t/tool-tips-in-fullscreen-mode-for-charts/6800/8)
+st.markdown('<style>#vg-tooltip-element{z-index: 1000051}</style>',
+             unsafe_allow_html=True)
+
 #Describe the data app
 st.image('https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Big_Ten_Conference_logo.svg/220px-Big_Ten_Conference_logo.svg.png')
 st.title('Running Back Carries by Yards Gained')
@@ -91,7 +95,6 @@ x = {"field": "statBin", "type": "ordinal", "sort": bins_to_keep, "axis":alt.Axi
 domain = ['Iowa', 'Michigan', 'Michigan State', 'Ohio State', 'Penn State', 'Wisconsin']
 range_ = ['#000000', 'yellow', '#18453B', '#DE3121', '#00265D', '#A00001']
 
-
 st.write('')
 row3_space1, row3_1, row3_space2, row3_2, row3_space3 = st.columns(
     (.1, 1, .1, 1, .1))
@@ -101,8 +104,9 @@ with row3_1:
     c = alt.Chart(data).mark_bar(opacity=0.7).encode(
     x=x,
     y=alt.Y('count_over_window_sum', stack=None, axis=alt.Axis(title="% Total RB Carries", format='%')),
-    color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=alt.Legend(orient="top-right"))
-    ).interactive()
+    color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=alt.Legend(orient="top-right")),
+    tooltip='count_over_window_sum'
+    )
     st.altair_chart(c, use_container_width=True)
 
 with row3_2:
@@ -131,11 +135,16 @@ row4_space1, row4_1, row4_space2, row4_2, row4_space3 = st.columns(
 
 with row4_1:
     st.subheader("Cumulative Percentage of Total Runshes by Yards Gained")
+
+    #Incorporate the code at this link to make this chart interactive
+    #https://altair-viz.github.io/gallery/multiline_tooltip.html
+
     #Show a cumulative line chart plotting both teams on single chart
     c_two = alt.Chart(data).mark_line().encode(
         x=x,
         y=alt.Y('cum_sum_as_window_percentage', stack=None, axis=alt.Axis(title=None, format='%')),
-        color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None)
+        color=alt.Color('team', scale=alt.Scale(domain=domain, range=range_), legend=None),
+        tooltip='cum_sum_as_window_percentage'
     )                   
     st.altair_chart(c_two, use_container_width=True)
 
